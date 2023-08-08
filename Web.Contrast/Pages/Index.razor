@@ -1,0 +1,122 @@
+﻿@page "/"
+<PageTitle>Index</PageTitle>
+<style>
+    .masu{
+        border: solid 1px;
+    }
+    .board{
+        display: grid;
+        grid-template-columns: repeat(5, 100px);
+        grid-auto-rows: 100px;
+        border: solid 1px;
+        margin: 0 10px;
+    }
+    .koma{
+        width: 100%;
+        height: 100%;
+    }
+    .koma1{
+
+    }
+    .koma2{
+        transform: rotate(180deg);
+    }
+
+    .tile{
+        width: 90px;
+        height: 90px;
+        margin: 10px;
+    }
+
+    .gray {
+        background-color: gray;
+    }
+
+    .black {
+        background-color: black;
+    }
+
+    .can-move{
+        background-color: rgba(255, 0, 0, 30%);
+    }
+
+    .prompt{
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        font-size: 28px;
+        display: grid;
+        letter-spacing: 4px; /* 文字間 */
+        text-shadow: 2px 2px 1px #ffffff, -2px 2px 1px #ffffff, 2px -2px 1px #ffffff, -2px -2px 1px #ffffff, 2px 0px 1px #ffffff, 0px 2px 1px #ffffff, -2px 0px 1px #ffffff, 0px -2px 1px #ffffff; /* 文字の影 */
+    }
+
+    .backdrop {
+	    -webkit-backdrop-filter: blur(4px);
+	    backdrop-filter: blur(4px);
+    }
+
+    /* backdrop-filter 非対応ブラウザ用 */
+    @@supports not ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+	    .backdrop {
+		    background: rgba(0,0,0, 90%);
+	    }
+    }
+   
+</style>
+
+
+<div>
+    <div class="game" style="position:relative;" >
+        <div style="display: flex; padding: 10px;">
+            <div style="margin-top: -5px;">
+                <ul style="list-style-type: none; padding:0; margin:0;">
+                    @foreach (var tile in _havingTiles.Where(v => v < 0).OrderBy(v => v))
+                    {
+                        <li><div class="tile @(GetTileClasses(tile))" @onclick="()=>OnClickTile(tile)"/></li>
+                    }
+                </ul>
+            </div>
+            <div class="board">
+                @for (int i = 0; i < 5; i++)
+                {
+                    @for (int j = 0; j < 5; j++)
+                    {
+                        int x = i;
+                        int y = j;
+                        <div class="masu masu@(i)-@(j) @(GetMasuHighlight(x,y))" @onclick="(e)=>OnMasuClick(e, x, y)">
+                            <div class="@(GetTileClasses(i, j))" style="margin: 5%; height: 90%;">
+                                @DrawKoma(i,j)
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div style="align-self: flex-end; margin-bottom: -5px;">
+                <ul style="list-style-type: none; padding:0; margin:0;">
+                    @foreach (var tile in _havingTiles.Where(v => v > 0).OrderBy(v => v))
+                    {
+                        <li><div class="tile @(GetTileClasses(tile))" @onclick="()=>OnClickTile(tile)" /></li>
+                    }
+                </ul>
+            </div>
+            <div style="display: grid;">
+                <div>
+                    <span hidden="@(_currentTurn == Turn.Positive)">↑</span>
+                    <span hidden="@(_currentTurn == Turn.Negative)">↓</span>
+                </div>
+                    <button style="align-self: flex-end;" @onclick="GoNextTurn" disabled="@(_mode != Mode.TileSelecting && _mode != Mode.TileMove)">
+                        ターン終了
+                    </button>
+            </div>
+        </div>
+        <div class="prompt backdrop" hidden="@(_mode != Mode.Initialized)">
+            <div style="display: flex; justify-content: center; align-items: center;" hidden="@(_mode != Mode.Initialized)" @onclick="OnPromptClick">
+                <span>クリックで開始</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<SurveyPrompt Title="How is Blazor working for you?" />
