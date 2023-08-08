@@ -23,7 +23,7 @@ namespace Web.Contrast.Pages
         public const int PlayerCount = 2;
 
         private Masu[,] _board = new Masu[BoardSize, BoardSize];
-        private List<int> _havingTiles = new() { 2, 2, 3, -2, -2, -3 };
+        private List<int> _havingTiles = new() { 2, 2, 2, 3, -2, -2, -2, -3 };
 
         private (int x, int y) _selectedKoma = (-1, -1);
         private int _selectedTile = 0;
@@ -68,7 +68,7 @@ namespace Web.Contrast.Pages
                 _board[0, i].Koma = -1;
                 _board[BoardSize - 1, i].Koma = 1;
             }
-            _havingTiles = new() { 2, 2, 3, -2, -2, -3 };
+            _havingTiles = new() { 2, 2, 2, 3, -2, -2, -2, -3 };
             _mode = Mode.Initialized;
         }
 
